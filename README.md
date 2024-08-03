@@ -79,7 +79,7 @@ pnpm dlx shadcn-ui@latest init
 
 ### Installed components
 
-`pnpm dlx shadcn-ui@latest add button`
+`pnpm dlx shadcn-ui@latest add button card dialog dropdown-menu input label select separator table`
 
 ## Set `ESlint` and `Prettier`
 
@@ -129,4 +129,40 @@ pnpm add -d eslint @rocketseat/eslint-config prettier-plugin-tailwindcss eslint-
 
 ```shell
 pnpm i react-router-dom
+```
+
+## Install `react-helmet-async`
+
+```shell
+pnpm i react-helmet-async
+```
+
+## Install `react-hook-form`
+
+```shell
+pnpm i react-hook-form
+```
+
+## Install `zod`
+
+```shell
+pnpm i zod
+```
+
+## Install `@hookform/resolvers`
+
+```shell
+pnpm i @hookform/resolvers
+```
+
+## Install `sonner` (a Toast Library)
+
+```shell
+pnpm i sonner
+```
+
+## Install `recharts` (a Charts Library)
+
+```shell
+pnpm i recharts
 ```
