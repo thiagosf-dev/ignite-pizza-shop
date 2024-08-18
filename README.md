@@ -79,7 +79,7 @@ pnpm dlx shadcn-ui@latest init
 
 ### Installed components
 
-`pnpm dlx shadcn-ui@latest add button card dialog dropdown-menu input label select separator table`
+`pnpm dlx shadcn-ui@latest add button card calendar dialog dropdown-menu input label skeleton select separator table textarea`
 
 ## Set `ESlint` and `Prettier`
 
@@ -165,4 +165,28 @@ pnpm i sonner
 
 ```shell
 pnpm i recharts
+```
+
+## Install `axios` (a API Client)
+
+```shell
+pnpm i axios
+```
+
+## Install `zod` (to type the ENV file)
+
+```shell
+pnpm i zod
+```
+
+## Install `react-query` (react hooks to call requests)
+
+```shell
+pnpm i @tanstack/react-query
+```
+
+## Install `date-fns` (date management library)
+
+```shell
+pnpm i date-fns
 ```

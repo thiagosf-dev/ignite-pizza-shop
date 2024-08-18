@@ -8,15 +8,17 @@ import {
 import { Button } from './ui/button'
 
 interface PaginationProps {
-  pageIndex: 0
+  pageIndex: number
   totalCount: number
   perPage: number
+  onPageChange: (pageIndex: number) => Promise<void> | void
 }
 
 export function Pagination({
   pageIndex,
   perPage,
   totalCount,
+  onPageChange,
 }: PaginationProps) {
   const pages = Math.ceil(totalCount / perPage) || 1
 
@@ -32,22 +34,42 @@ export function Pagination({
         </div>
 
         <div className="flex items-center gap-2">
-          <Button className="h-8 w-8 p-0" variant="outline">
+          <Button
+            className="h-8 w-8 p-0"
+            variant="outline"
+            onClick={() => onPageChange(0)}
+            disabled={pageIndex <= 1}
+          >
             <ChevronsLeft className="h-4 w-4" />
             <span className="sr-only">Primeira página</span>
           </Button>
 
-          <Button className="h-8 w-8 p-0" variant="outline">
+          <Button
+            className="h-8 w-8 p-0"
+            variant="outline"
+            onClick={() => onPageChange(pageIndex - 1)}
+            disabled={pageIndex <= 0}
+          >
             <ChevronLeft className="h-4 w-4" />
             <span className="sr-only">Página anterior</span>
           </Button>
 
-          <Button className="h-8 w-8 p-0" variant="outline">
+          <Button
+            className="h-8 w-8 p-0"
+            variant="outline"
+            onClick={() => onPageChange(pageIndex + 1)}
+            disabled={pageIndex + 1 >= pages}
+          >
             <ChevronRight className="h-4 w-4" />
             <span className="sr-only">Próxima página</span>
           </Button>
 
-          <Button className="h-8 w-8 p-0" variant="outline">
+          <Button
+            className="h-8 w-8 cursor-pointer p-0"
+            variant="outline"
+            onClick={() => onPageChange(pages - 1)}
+            disabled={pages <= pageIndex + 2}
+          >
             <ChevronsRight className="h-4 w-4" />
             <span className="sr-only">Última página</span>
           </Button>

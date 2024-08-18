@@ -1,3 +1,8 @@
+import { useQuery } from '@tanstack/react-query'
+import { subDays } from 'date-fns'
+import { Loader2 } from 'lucide-react'
+import { useMemo, useState } from 'react'
+import { DateRange } from 'react-day-picker'
 import {
   CartesianGrid,
   Line,
@@ -8,6 +13,7 @@ import {
 } from 'recharts'
 import colors from 'tailwindcss/colors'
 
+import { getDayliRevenueInPeriod } from '@/api/get-dayli-revenue-in-period'
 import {
   Card,
   CardContent,
@@ -15,18 +21,33 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-
-const data = [
-  { date: '10/12', revenue: 1200 },
-  { date: '11/12', revenue: 800 },
-  { date: '12/12', revenue: 900 },
-  { date: '13/12', revenue: 400 },
-  { date: '14/12', revenue: 2300 },
-  { date: '15/12', revenue: 800 },
-  { date: '16/12', revenue: 640 },
-]
+import { DateRangePicker } from '@/components/ui/date-range-picker'
+import { Label } from '@/components/ui/label'
 
 export function RevenueChart() {
+  const [dateRange, setDateRange] = useState<DateRange | undefined>({
+    from: subDays(new Date(), 7),
+    to: new Date(),
+  })
+
+  const { data: dayliRevenueInPeriod } = useQuery({
+    queryKey: ['metrics', 'dayli-revenue-in-period', dateRange],
+    queryFn: () =>
+      getDayliRevenueInPeriod({
+        from: dateRange?.from,
+        to: dateRange?.to,
+      }),
+  })
+
+  const chartData = useMemo(() => {
+    return dayliRevenueInPeriod?.map((charItem) => {
+      return {
+        date: charItem.date,
+        receipt: charItem.receipt / 100,
+      }
+    })
+  }, [dayliRevenueInPeriod])
+
   return (
     <Card className="col-span-6">
       <CardHeader className="flex-row items-center justify-between pb-8">
@@ -37,36 +58,52 @@ export function RevenueChart() {
 
           <CardDescription>Receita diária no período</CardDescription>
         </div>
+
+        <div className="flex items-center gap-3">
+          <Label>Período</Label>
+          <DateRangePicker date={dateRange} onDateChange={setDateRange} />
+        </div>
       </CardHeader>
 
       <CardContent>
-        <ResponsiveContainer width="100%" height={240}>
-          <LineChart style={{ fontSize: 12 }} data={data}>
-            <XAxis dataKey="date" axisLine={false} tickLine={false} dy={16} />
+        {chartData ? (
+          <ResponsiveContainer width="100%" height={240}>
+            <LineChart style={{ fontSize: 12 }} data={chartData}>
+              <XAxis
+                dataKey="date"
+                axisLine={false}
+                tickLine={false}
+                tick={{ fontSize: 12, dy: 16 }}
+              />
 
-            <YAxis
-              width={80}
-              stroke="#888"
-              axisLine={false}
-              tickLine={false}
-              tickFormatter={(value: number) =>
-                value.toLocaleString('pt-BR', {
-                  style: 'currency',
-                  currency: 'BRL',
-                })
-              }
-            />
+              <YAxis
+                width={80}
+                tick={{ stroke: '#888', fontSize: 12 }}
+                axisLine={false}
+                tickLine={false}
+                tickFormatter={(value: number) =>
+                  value.toLocaleString('pt-BR', {
+                    style: 'currency',
+                    currency: 'BRL',
+                  })
+                }
+              />
 
-            <CartesianGrid className="stroke-muted" vertical={false} />
+              <CartesianGrid className="stroke-muted" vertical={false} />
 
-            <Line
-              type="linear"
-              strokeWidth={2}
-              dataKey="revenue"
-              stroke={colors.violet[500]}
-            />
-          </LineChart>
-        </ResponsiveContainer>
+              <Line
+                type="linear"
+                strokeWidth={2}
+                dataKey="receipt"
+                stroke={colors.violet[500]}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        ) : (
+          <div className="flex h-[240px] w-full flex-col items-center justify-center gap-0">
+            <Loader2 className="h-44 w-44 animate-spin text-muted-foreground" />
+          </div>
+        )}
       </CardContent>
     </Card>
   )
